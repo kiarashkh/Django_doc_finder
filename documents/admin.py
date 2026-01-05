@@ -13,12 +13,11 @@ class DocumentAdmin(admin.ModelAdmin):
     list_display = ("title", "date", "author")
     search_fields = ("title", "text")
     list_filter = ("date", "tags", "author")
-    # filter_horizontal = ("tags", )
+    filter_horizontal = ("tags", )
 
 @admin.register(Question)
 class QestionAdmin(admin.ModelAdmin):
     list_display = ("question_text", "document", "created_at", "author", "answer_text")
-    search_fields = ("question_text")
+    search_fields = ("question_text",)
     list_filter = ("created_at", "document", "author")
 
-    
