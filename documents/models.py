@@ -20,7 +20,7 @@ class Document(models.Model):
         return f"{tag_list} \n {self.title}"
     
 class Question(models.Model):
-    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name="questions", null=True, blank=True)
+    documents = models.ManyToManyField(Document, related_name="questions", blank=True)
     question_text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     answer_text = models.TextField(blank=True, null=True)

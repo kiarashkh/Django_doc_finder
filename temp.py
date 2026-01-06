@@ -1,30 +1,42 @@
-from django.contrib import admin
-from .models import Document, Tag, Question
+from rank_bm25 import BM25Okapi
+from documents.models import Document
+import re
+from typing import List, Tuple
 
-class AuthorMixin:
-    """Mixin to auto-assign the current user as author when saving."""
-    def save_model(self, request, obj, form, change):
-        if not obj.author:  # only set if not already assigned
-            obj.author = request.user
-        super().save_model(request, obj, form, change)
+_bm25: BM25Okapi | None = None
+_documents: List[Document] | None = None
 
 
-@admin.register(Document)
-class DocumentAdmin(AuthorMixin, admin.ModelAdmin):
-    list_display = ("title", "date", "author")
-    search_fields = ("title", "text")
-    list_filter = ("date", "tags", "author")
-    filter_horizontal = ("tags")
+STOPWORDS = {"the", "is", "and", "of", "to", "a", "in"}
+
+def tokenize(text: str):
+    tokens = re.findall(r"\b\w+\b", text.lower())
+    return [t for t in tokens if t not in STOPWORDS]
 
 
-@admin.register(Question)
-class QuestionAdmin(AuthorMixin, admin.ModelAdmin):
-    list_display = ("question_text", "document", "created_at", "author", "answer_text")
-    search_fields = ("question_text")
-    list_filter = ("created_at", "document", "author")
+def build_index() -> None:
+    global _bm25, _documents
+
+    documents = list(
+        Document.objects.prefetch_related("tags").all()
+    )
+
+    corpus = []
+
+    for doc in documents:
+        combined_text = (
+            f"{doc.title} "
+            f"{doc.text[:3000]} "
+            f"{' '.join(tag.name for tag in doc.tags.all())}"
+        )
+        corpus.append(tokenize(combined_text))
+
+    _bm25 = BM25Okapi(corpus)
+    _documents = documents
 
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-    search_fields = ("name",)
+def get_index() -> Tuple[BM25Okapi, List[Document]]:
+    if _bm25 is None or _documents is None:
+        build_index()
+
+    return _bm25, _documents
