@@ -8,7 +8,9 @@ services:
       - DB_NAME=projectdb
       - DB_USER=projectuser
       - DB_PASSWORD=${DB_PASSWORD}
-      - HUGGINGFACEHUB_API_TOKEN=${SECRET_HF_TOKEN}
+      # - HUGGINGFACEHUB_API_TOKEN=${HUGGINGFACEHUB_API_TOKEN}
+      # - HUGGINGFACEHUB_API_TOKEN=${SECRET_HF_TOKEN}
+      # - HF_ENDPOINT=https://router.huggingface.co
     ports:
       - "8000:8000"
 

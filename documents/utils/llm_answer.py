@@ -1,24 +1,39 @@
-from langchain.llms import HuggingFaceHub
+from langchain_core.language_models.fake import FakeListLLM
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 
 def answer_question_with_llm(question):
-    docs_text = []
-    for doc in question.documents.all():
-        docs_text.append(f"{doc.title}\n{doc.text[:1000]}")
-
+    docs_text = [f"{doc.title}\n{doc.text}" for doc in question.documents.all()]
     context = "\n\n".join(docs_text)
 
-    prompt = f"Question: {question.question_text}\n\n"
-    prompt += f"Relevant documents:\n{context}\n\n"
-    prompt += "Answer based only on these documents:"
+    prompt = PromptTemplate(
+        input_variables=["context", "question"],
+        template="""You must answer the question using ONLY the information below.
 
-    llm = HuggingFaceHub(
-        repo_id="google/flan-t5-base",
-        model_kwargs={"temperature": 0.0, "max_length": 256}
+Documents:
+{context}
+
+Question:
+{question}
+
+Answer:"""
     )
 
-    answer = llm(prompt)
+    llm = FakeListLLM(
+        responses=[
+            "This is a fake answer for testing purposes.",
+            "Another fake answer to simulate multiple calls.",
+            "Yet another placeholder answer."
+        ]
+    )
 
-    question.answer_text = answer
+    chain = prompt | llm | StrOutputParser()
+
+    output = chain.invoke({
+        "context": context,
+        "question": question.question_text
+    })
+
+    question.answer_text = output
     question.save()
-
-    return answer
+    return output

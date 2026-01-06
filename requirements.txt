@@ -4,4 +4,7 @@ gunicorn==21.2.0
 psycopg2-binary
 rank_bm25
 langchain
+langchain-core
+langchain-huggingface
 huggingface_hub
+langchain-community
