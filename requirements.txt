@@ -3,3 +3,5 @@ django==5.0.1
 gunicorn==21.2.0
 psycopg2-binary
 rank_bm25
+langchain
+huggingface_hub

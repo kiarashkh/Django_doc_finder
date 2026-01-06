@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Document, Tag, Question
-# from .utils.bm25_cache import build_index
 from .utils.bm25_search import find_relevant_documents_bm25
+from .utils.llm_answer import answer_question_with_llm
 
 import logging
 
@@ -13,9 +13,14 @@ def run_bm25(modeladmin, request, queryset):
     logger.info("so far good")
     for question in queryset:
         results = find_relevant_documents_bm25(question)
-    
-    modeladmin.message_user(request, f"Question '{question}' → {len(results)} relevant docs found")
+        modeladmin.message_user(request, f"Question '{question}': {len(results)} relevant docs found")
 
+
+@admin.action(description="Get answer of question from LLM")
+def run_llm(modeladmin, request, queryset):
+    for question in queryset:
+        result = answer_question_with_llm(question)
+        modeladmin.message_user(request, f"Question: '{question}', answer generated: {result[:100]}...")
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -35,5 +40,5 @@ class QestionAdmin(admin.ModelAdmin):
     search_fields = ("question_text",)
     list_filter = ("created_at", "documents", "author")
     filter_horizontal = ("documents",)
-    actions = [run_bm25]
+    actions = [run_bm25, run_llm]
 

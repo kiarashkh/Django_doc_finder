@@ -3,7 +3,7 @@ from documents.models import Document
 import logging
 
 
-def find_relevant_documents_bm25(question, top_k=5):
+def find_relevant_documents_bm25(question, top_k=3):
     bm25, meta = get_index()
 
     query_tokens = tokenize(question.question_text)
