@@ -3,14 +3,14 @@ from .models import Document, Tag, Question
 from .utils.bm25_search import find_relevant_documents_bm25
 from .utils.llm_answer import answer_question_with_llm
 
-import logging
+# import logging
 
 
 @admin.action(description="Run BM25 search for selected questions")
 def run_bm25(modeladmin, request, queryset):
-    logger = logging.getLogger(__name__) 
-    logger.debug("went into action function") 
-    logger.info("so far good")
+    # logger = logging.getLogger(__name__) 
+    # logger.debug("went into action function") 
+    # logger.info("so far good")
     for question in queryset:
         results = find_relevant_documents_bm25(question)
         modeladmin.message_user(request, f"Question '{question}': {len(results)} relevant docs found")
