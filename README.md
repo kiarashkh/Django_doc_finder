@@ -47,6 +47,7 @@ Log in, and you can immediately:
 - Generate answers via LLM
 
 **To run bm25 and generate LLM answers use actions in questions section**
+
 ---
 
 ##  Sample Data 
@@ -55,6 +56,7 @@ The system supports adding sample data for demonstration:
 - **2 example questions**
 - These can be created directly through the Django admin panel.
 - They are used to demonstrate the BM25 ranking and LLM answer generation pipeline.
+
 ---
 
 ## How It Works 
@@ -69,6 +71,7 @@ The system supports adding sample data for demonstration:
 - Passes it through a LangChain chain
 - Saves the generated answer back into the database
 During development, a **Fake LLM** is used to avoid external API calls and ensure stable behavior.
+
 ---
 
 ##  Tests
@@ -80,6 +83,12 @@ test structure:
 documents/tests/test_bm25.py
 documents/tests/test_llm.py
 ```
+to run the tests first make a terminal into web app then run test command
+```bash
+docker compose exec web bash
+python manage.py test documents
+```
+
 ---
 
 ## Design Philosophy 
