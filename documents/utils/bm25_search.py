@@ -1,9 +1,12 @@
 from documents.utils.bm25_cache import get_index, tokenize
 from documents.models import Document
-# import logging
+
+import logging
+logger = logging.getLogger(__name__) 
 
 
 def find_relevant_documents_bm25(question, top_k=3):
+    logger.info("finding relevant docs")
     bm25, meta = get_index()
 
     query_tokens = tokenize(question.question_text)
@@ -19,7 +22,6 @@ def find_relevant_documents_bm25(question, top_k=3):
 
     for i in ranked_indices[:top_k]:
         score = scores[i]
-        # logger = logging.getLogger(__name__) 
         # logger.debug("went into search function") 
         # logger.info(score)
         # print(score)
@@ -37,5 +39,5 @@ def find_relevant_documents_bm25(question, top_k=3):
             "title": title,
             "score": float(score),
         })
-
+    logger.info("relevant docs found")
     return results

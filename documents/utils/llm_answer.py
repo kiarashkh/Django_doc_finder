@@ -2,7 +2,12 @@ from langchain_core.language_models.fake import FakeListLLM
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
+import logging
+logger = logging.getLogger(__name__) 
+
+
 def answer_question_with_llm(question):
+    logger.info("answering question with LLM")
     docs_text = [f"{doc.title}\n{doc.text}" for doc in question.documents.all()]
     context = "\n\n".join(docs_text)
 
@@ -36,4 +41,5 @@ Answer:"""
 
     question.answer_text = output
     question.save()
+    logger.info("question answered with LLM")
     return output

@@ -3,6 +3,9 @@ from documents.models import Document
 import re
 from typing import List, Tuple, Dict
 
+import logging
+logger = logging.getLogger(__name__)
+
 _bm25 = None
 _doc_meta = None 
 
@@ -13,6 +16,7 @@ def tokenize(text: str):
     return [t for t in tokens if t not in STOPWORDS]
 
 def build_index() -> None:
+    logger.info("building bm_25 indexes")
     global _bm25, _doc_meta
 
     qs = Document.objects.prefetch_related("tags").all()
@@ -35,6 +39,7 @@ def build_index() -> None:
 
     _bm25 = BM25Okapi(corpus)
     _doc_meta = meta
+    logger.info("building bm_25 indexes done")
 
 
 def get_index() -> Tuple[BM25Okapi, List[Dict]]:

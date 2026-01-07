@@ -3,24 +3,26 @@ from .models import Document, Tag, Question
 from .utils.bm25_search import find_relevant_documents_bm25
 from .utils.llm_answer import answer_question_with_llm
 
-# import logging
+import logging
 
+logger = logging.getLogger(__name__) 
 
 @admin.action(description="Run BM25 search for selected questions")
 def run_bm25(modeladmin, request, queryset):
-    # logger = logging.getLogger(__name__) 
-    # logger.debug("went into action function") 
-    # logger.info("so far good")
+    logger.info("running bm_25 action in admin")
     for question in queryset:
         results = find_relevant_documents_bm25(question)
         modeladmin.message_user(request, f"Question '{question}': {len(results)} relevant docs found")
+    logger.info("bm_25 action in admin done")
 
 
 @admin.action(description="Get answer of question from LLM")
 def run_llm(modeladmin, request, queryset):
+    logger.info("running run_llm action in admin")
     for question in queryset:
         result = answer_question_with_llm(question)
         modeladmin.message_user(request, f"Question: '{question}', answer generated: {result[:100]}...")
+    logger.info("run_llm action in admin done")
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):

@@ -123,6 +123,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -130,9 +131,13 @@ LOGGING = {
         "console": {
             "class": "logging.StreamHandler",
         },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "logs/documents.log"),
+        },
     },
     "root": {
-        "handlers": ["console"],
-        "level": "DEBUG",
+        "handlers": ["console", "file"],
+        "level": "INFO",
     },
 }
