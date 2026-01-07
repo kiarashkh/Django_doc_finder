@@ -45,6 +45,8 @@ Log in, and you can immediately:
 - Add questions
 - Run BM25 search
 - Generate answers via LLM
+
+**To run bm25 and generate LLM answers use actions in questions section**
 ---
 
 ##  Sample Data 
